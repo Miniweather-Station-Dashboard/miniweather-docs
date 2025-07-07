@@ -1,5 +1,12 @@
 [book]
-authors = ["inamnurulf"]
+title = "Miniweather Station Documentation"
+author = "In'am Nurul Fuady"
 language = "en"
 src = "src"
-title = "miniweather-docs"
+
+[build]
+build-dir = "book"
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
