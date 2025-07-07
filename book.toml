@@ -1,0 +1,5 @@
+[book]
+authors = ["inamnurulf"]
+language = "en"
+src = "src"
+title = "miniweather-docs"
