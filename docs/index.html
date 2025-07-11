@@ -167,15 +167,52 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Miniweather Station Dashboard is a real-time weather monitoring system built using IoT sensors, MQTT, Redis, and a scalable backend architecture. It provides both a public dashboard for real-time weather data and an admin panel for managing devices, users, and alerts.</p>
-<p>Key features:</p>
+<p>Miniweather Station Dashboard adalah sistem pemantauan cuaca berbasis IoT yang memungkinkan pengguna untuk melihat data sensor secara real-time dari berbagai lokasi. Sistem ini dirancang untuk mendukung pemantauan lingkungan secara efisien dan terstruktur, serta dapat diskalakan sesuai kebutuhan.</p>
+<hr />
+<h2 id="-tujuan"><a class="header" href="#-tujuan">🎯 Tujuan</a></h2>
+<p>Dokumentasi ini bertujuan untuk memberikan panduan lengkap bagi administrator dan pengguna teknis dalam:</p>
 <ul>
-<li>Real-time data from IoT devices via MQTT</li>
-<li>Integration with Hyperbase (centralized IoT DB)</li>
-<li>Redis caching for fault tolerance</li>
-<li>Admin panel for device/user management</li>
-<li>Public dashboard with article and alert display</li>
+<li>Mengelola perangkat IoT (onboarding, konfigurasi)</li>
+<li>Menambahkan dan mengelola tipe sensor</li>
+<li>Mengelola data dan visualisasi</li>
+<li>Menjalankan proses monitoring dan validasi data</li>
+<li>Menggunakan fitur-fitur admin panel secara optimal</li>
 </ul>
+<hr />
+<h2 id="-komponen-utama-sistem"><a class="header" href="#-komponen-utama-sistem">⚙️ Komponen Utama Sistem</a></h2>
+<ol>
+<li>
+<p><strong>Admin Panel</strong><br />
+Antarmuka untuk mengelola perangkat, sensor, artikel, dan pengguna.</p>
+</li>
+<li>
+<p><strong>Public Dashboard</strong><br />
+Menampilkan data cuaca secara real-time ke publik.</p>
+</li>
+<li>
+<p><strong>Backend API</strong><br />
+Menangani autentikasi, penyimpanan data, integrasi MQTT, dan pengolahan data.</p>
+</li>
+<li>
+<p><strong>MQTT Broker</strong><br />
+Menjadi jalur komunikasi antara device IoT dan backend.</p>
+</li>
+<li>
+<p><strong>Redis &amp; Hyperbase</strong><br />
+Redis digunakan untuk caching data jika Hyperbase offline, sementara Hyperbase menyimpan data secara permanen.</p>
+</li>
+</ol>
+<hr />
+<h2 id="-struktur-dokumentasi"><a class="header" href="#-struktur-dokumentasi">🧭 Struktur Dokumentasi</a></h2>
+<p>Dokumentasi ini terbagi ke dalam beberapa bagian penting:</p>
+<ul>
+<li><strong>Installation</strong>: Panduan instalasi dan setup awal</li>
+<li><strong>Onboarding Device</strong>: Proses menambahkan perangkat ke sistem</li>
+<li><strong>Manage Alerts, Articles &amp; Users</strong>: Manajemen konten dashboard dan admin</li>
+<li><strong>API Reference</strong>: Detail teknis endpoint</li>
+</ul>
+<hr />
+<p>Dengan mengikuti dokumentasi ini, kamu akan dapat mengoperasikan dan mengembangkan sistem Miniweather Station dengan lebih efektif dan efisien.</p>
 
                     </main>
 
