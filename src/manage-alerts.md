@@ -8,7 +8,7 @@ Halaman ini menjelaskan cara menambahkan dan mengelola peringatan dini (warning)
 
 Setelah login sebagai admin, klik menu **Warning Management** di sidebar.
 
-![Halaman Warning Management](images/warning/halaman_warning_mangement.png)
+![Halaman Warning Management](images/create_warning/halaman_warning_mangement.png)
 
 ---
 
@@ -16,7 +16,7 @@ Setelah login sebagai admin, klik menu **Warning Management** di sidebar.
 
 Klik tombol **Create New Warning** untuk membuka form input warning.
 
-![Form Tambah Warning](images/warning/tamabahkan_data_warning_pada_form.png)
+![Form Tambah Warning](images/create_warning/tamabahkan_data_warning_pada_form.png)
 
 ---
 
@@ -34,9 +34,9 @@ Isi formulir dengan informasi berikut:
   - Flood
 - **Status**: Centang “Active” untuk langsung menampilkan warning
 
-![Contoh Isi Form Warning](images/warning/contoh_cara_mengisi_data_warning.png)
+![Contoh Isi Form Warning](images/create_warning/contoh_cara_mengisi_data_warning.png)
 
-![Tipe-Tipe Warning](images/warning/tipe_tipe_warning.png)
+![Tipe-Tipe Warning](images/create_warning/tipe_tipe_warning.png)
 
 ---
 
@@ -44,7 +44,7 @@ Isi formulir dengan informasi berikut:
 
 Klik tombol **Create** untuk menyimpan peringatan. Setelah berhasil, warning akan muncul di tabel daftar seperti berikut:
 
-![Warning Berhasil Ditambahkan](images/warning/warning_berhasil_ditambah.png)
+![Warning Berhasil Ditambahkan](images/create_warning/warning_berhasil_ditambah.png)
 
 ---
 
@@ -52,7 +52,7 @@ Klik tombol **Create** untuk menyimpan peringatan. Setelah berhasil, warning aka
 
 Peringatan yang aktif akan langsung ditampilkan di bagian “Peringatan Dini” pada halaman dashboard publik.
 
-![Tampilan di Dashboard Publik](images/warning/tampilan_warning_di_dashboard_publik.png)
+![Tampilan di Dashboard Publik](images/create_warning/tampilan_warning_di_dashboard_publik.png)
 
 ---
 
