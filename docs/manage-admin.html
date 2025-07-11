@@ -166,23 +166,56 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="manage-admin-users"><a class="header" href="#manage-admin-users">Manage Admin Users</a></h1>
-<p>You can add, edit, or delete admin accounts via <code>/users</code>.</p>
-<p>Steps to add an admin:</p>
-<ol>
-<li>Navigate to <code>/users</code>.</li>
-<li>Click <code>+ Add User</code>.</li>
-<li>Fill in:
+                        <h1 id="manage-users"><a class="header" href="#manage-users">Manage Users</a></h1>
+<p>Fitur manajemen pengguna digunakan oleh SuperAdmin untuk menambahkan, menghapus, atau mengatur akun pengguna (User atau Admin) yang dapat mengakses sistem Miniweather Station Dashboard.</p>
+<hr />
+<h2 id="-1-akses-menu-user-management"><a class="header" href="#-1-akses-menu-user-management">✅ 1. Akses Menu User Management</a></h2>
+<p>Klik menu <strong>User Management</strong> dari sidebar untuk melihat daftar pengguna saat ini.</p>
+<p><img src="images/admin/halaman_manajemen_admin.png" alt="Halaman Manajemen Admin" /></p>
+<hr />
+<h2 id="-2-tambahkan-pengguna-baru"><a class="header" href="#-2-tambahkan-pengguna-baru">➕ 2. Tambahkan Pengguna Baru</a></h2>
+<p>Klik tombol <strong>Create New User</strong> di kanan atas untuk membuka form penambahan.</p>
+<p><img src="images/admin/buka_form_tambahkan_admin.png" alt="Buka Form Tambah Admin" /></p>
+<hr />
+<h2 id="-3-isi-form-pengguna"><a class="header" href="#-3-isi-form-pengguna">📝 3. Isi Form Pengguna</a></h2>
+<p>Isi formulir berikut:</p>
 <ul>
-<li>Name</li>
-<li>Email</li>
-<li>Password</li>
-<li>Role (admin or superAdmin)</li>
+<li><strong>Name</strong>: Nama pengguna</li>
+<li><strong>Email</strong>: Email pengguna</li>
+<li><strong>Role</strong>: Pilih peran <code>Admin</code>, <code>SuperAdmin</code>, atau <code>User</code></li>
 </ul>
-</li>
-<li>Click Save.</li>
-</ol>
-<p>Only <code>superAdmin</code> can create or remove other admins.</p>
+<p><img src="images/admin/contoh_pengisian_data_admin.png" alt="Contoh Form Input Admin" /></p>
+<blockquote>
+<p>⚠️ Setelah mengisi, klik tombol <strong>Create</strong></p>
+</blockquote>
+<hr />
+<h2 id="-4-cek-email-pengguna"><a class="header" href="#-4-cek-email-pengguna">📧 4. Cek Email Pengguna</a></h2>
+<p>Setelah akun dibuat, sistem akan mengirimkan email otomatis ke alamat email pengguna yang berisi kredensial login.</p>
+<p><img src="images/admin/ceredential_tercantum_di_email.png" alt="Email Berisi Kredensial" /></p>
+<p>Pengguna akan menerima email dengan isi seperti:</p>
+<ul>
+<li><strong>Email</strong>: alamat email terdaftar</li>
+<li><strong>Temporary Password</strong>: sandi awal untuk login</li>
+<li>Catatan: pengguna harus segera mengganti password setelah login</li>
+</ul>
+<p><img src="images/admin/cek_email_user_yang_ditambahkan.png" alt="Email Diterima di Kotak Masuk" /></p>
+<hr />
+<h2 id="-5-verifikasi-data-di-tabel"><a class="header" href="#-5-verifikasi-data-di-tabel">✅ 5. Verifikasi Data di Tabel</a></h2>
+<p>Setelah berhasil dibuat, pengguna akan muncul di daftar manajemen dengan status:</p>
+<ul>
+<li><strong>Active</strong>: Jika sudah aktif</li>
+<li><strong>Inactive</strong>: Jika akun belum digunakan untuk login pertama kali</li>
+</ul>
+<p><img src="images/admin/admin_berhasil_ditambahkan.png" alt="Admin Berhasil Ditambahkan" /></p>
+<hr />
+<h2 id="-catatan-teknis"><a class="header" href="#-catatan-teknis">🛠️ Catatan Teknis</a></h2>
+<ul>
+<li>Password awal bersifat sementara dan dikirim via email</li>
+<li>Akun dengan role <code>SuperAdmin</code> memiliki akses penuh, termasuk pengelolaan user</li>
+<li>Hanya <code>SuperAdmin</code> yang dapat membuat akun baru</li>
+</ul>
+<hr />
+<p>Dengan fitur ini, pengelolaan akun pengguna menjadi lebih terstruktur dan aman. Admin dapat mengatur siapa saja yang dapat menggunakan sistem, serta melakukan kontrol akses berdasarkan peran.</p>
 
                     </main>
 
