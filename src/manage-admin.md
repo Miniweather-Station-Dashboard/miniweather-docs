@@ -44,7 +44,7 @@ Pengguna akan menerima email dengan isi seperti:
 
 - **Email**: alamat email terdaftar
 - **Temporary Password**: sandi awal untuk login
-- Catatan: pengguna harus segera mengganti password setelah login
+- Catatan: fitur ganti password masih dalam pengembangan
 
 ![Email Diterima di Kotak Masuk](images/admin/cek_email_user_yang_ditambahkan.png)
 
