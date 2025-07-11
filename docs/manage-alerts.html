@@ -166,21 +166,59 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="manage-alerts"><a class="header" href="#manage-alerts">Manage Alerts</a></h1>
-<p>To add a weather alert or system warning:</p>
-<ol>
-<li>Navigate to <code>/alerts</code> in the admin panel.</li>
-<li>Click <code>+ Add Alert</code>.</li>
-<li>Input:
+                        <h1 id="manage-warnings"><a class="header" href="#manage-warnings">Manage Warnings</a></h1>
+<p>Halaman ini menjelaskan cara menambahkan dan mengelola peringatan dini (warning) pada sistem Miniweather Station Dashboard. Warning yang ditambahkan oleh admin akan ditampilkan di halaman publik untuk memberikan informasi penting kepada pengguna.</p>
+<hr />
+<h2 id="-1-akses-halaman-warning-management"><a class="header" href="#-1-akses-halaman-warning-management">✅ 1. Akses Halaman Warning Management</a></h2>
+<p>Setelah login sebagai admin, klik menu <strong>Warning Management</strong> di sidebar.</p>
+<p><img src="images/warning/halaman_warning_mangement.png" alt="Halaman Warning Management" /></p>
+<hr />
+<h2 id="-2-tambahkan-warning-baru"><a class="header" href="#-2-tambahkan-warning-baru">➕ 2. Tambahkan Warning Baru</a></h2>
+<p>Klik tombol <strong>Create New Warning</strong> untuk membuka form input warning.</p>
+<p><img src="images/warning/tamabahkan_data_warning_pada_form.png" alt="Form Tambah Warning" /></p>
+<hr />
+<h3 id="-3-isi-form-warning"><a class="header" href="#-3-isi-form-warning">📝 3. Isi Form Warning</a></h3>
+<p>Isi formulir dengan informasi berikut:</p>
 <ul>
-<li>Title (e.g. "Heavy Rain Warning")</li>
-<li>Description</li>
-<li>Valid period (optional)</li>
+<li><strong>Message</strong>: Isi pesan peringatan (misal: <em>Hati-hati akan potensi badai di sekitar Pantai Wohkudu</em>)</li>
+<li><strong>Type</strong>: Pilih tipe peringatan dari daftar berikut:
+<ul>
+<li>General</li>
+<li>Weather</li>
+<li>Tsunami</li>
+<li>Earthquake</li>
+<li>Volcano</li>
+<li>Flood</li>
 </ul>
 </li>
-<li>Save the alert.</li>
-</ol>
-<p>Alerts appear on the public dashboard and are also stored in the backend for logging.</p>
+<li><strong>Status</strong>: Centang “Active” untuk langsung menampilkan warning</li>
+</ul>
+<p><img src="images/warning/contoh_cara_mengisi_data_warning.png" alt="Contoh Isi Form Warning" /></p>
+<p><img src="images/warning/tipe_tipe_warning.png" alt="Tipe-Tipe Warning" /></p>
+<hr />
+<h2 id="-4-simpan-dan-verifikasi"><a class="header" href="#-4-simpan-dan-verifikasi">💾 4. Simpan dan Verifikasi</a></h2>
+<p>Klik tombol <strong>Create</strong> untuk menyimpan peringatan. Setelah berhasil, warning akan muncul di tabel daftar seperti berikut:</p>
+<p><img src="images/warning/warning_berhasil_ditambah.png" alt="Warning Berhasil Ditambahkan" /></p>
+<hr />
+<h2 id="-5-tampil-di-dashboard-publik"><a class="header" href="#-5-tampil-di-dashboard-publik">🌐 5. Tampil di Dashboard Publik</a></h2>
+<p>Peringatan yang aktif akan langsung ditampilkan di bagian “Peringatan Dini” pada halaman dashboard publik.</p>
+<p><img src="images/warning/tampilan_warning_di_dashboard_publik.png" alt="Tampilan di Dashboard Publik" /></p>
+<hr />
+<h2 id="-catatan-teknis"><a class="header" href="#-catatan-teknis">🛠️ Catatan Teknis</a></h2>
+<ul>
+<li>Warning disimpan di database melalui endpoint:</li>
+</ul>
+<pre><code>POST /v1/warnings
+Authorization: Bearer &lt;admin-token&gt;
+Content-Type: application/json
+
+</code></pre>
+<ul>
+<li>Tipe warning digunakan untuk styling dan filtering pada frontend</li>
+<li>Hanya warning yang berstatus <strong>active</strong> yang akan ditampilkan di dashboard publik</li>
+</ul>
+<hr />
+<p>Dengan fitur ini, admin dapat memberikan peringatan penting seperti cuaca ekstrem, gempa, atau banjir kepada pengguna secara cepat dan real-time.</p>
 
                     </main>
 
