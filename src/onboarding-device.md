@@ -1,100 +1,91 @@
 # Add Onboarding Device
 
-To onboard a new IoT device into the Miniweather Station Dashboard, follow the steps below.
+Untuk menambahkan perangkat baru (IoT device) ke sistem Miniweather Station Dashboard, ikuti langkah-langkah berikut:
 
 ---
 
-## ✅ As an Admin (How to Add Device via UI)
+## ✅ Sebagai Admin (Menambahkan Perangkat lewat UI)
 
-### Steps:
 
-1. 🔐 **Log in** to the Admin Panel (`/admin/login`)
-2. 📦 Navigate to the **Devices page** (`/devices`)
-3. ➕ Click `+ Add Device`
-4. 📝 Fill in the form:
+### 1. Masuk ke Halaman Utama
 
-   * **Device Name** (e.g., `Station Pantai Selatan`)
-   * **Serial Number** (must be unique)
-   * **Location**: Latitude and Longitude
-5. 💾 Click `Save`
+Setelah masuk ke link panel admin, kamu akan diarahkan ke halaman utama. Tekan tombol admin login
+
+![Halaman Admin](images/create_device/halaman_admin.png)
 
 ---
 
-## ⚙️ Backend Process
+### 2. Login ke Admin Panel
 
-Once the device is submitted, the frontend sends a POST request to the backend API.
+Buka halaman login admin di `/admin/login`, lalu masukkan kredensial.
 
-### Example Request:
-
-```
-POST /v1/onboarding-devices
-Content-Type: application/json
-Authorization: Bearer <admin-token>
-```
-
-```json
-{
-  "name": "Station Pantai Selatan",
-  "serial_number": "MW-PS-01",
-  "location": {
-    "lat": -7.7956,
-    "lng": 110.3695
-  }
-}
-```
+![Masukkan Kredensial](images/create_device/masukkan_credential.png)
 
 ---
 
-## 🛠 Backend Logic
+### 3. Buka Halaman Manajemen Perangkat
 
-1. Validate request fields
-2. Insert into `onboarding_devices` table
-3. Auto-link default sensor types (optional)
-4. Subscribe to MQTT topic `miniweather/<serial_number>`
-5. Prepare schema mapping for the device
-6. Log registration event
+Klik menu "Dashboard" untuk membuka halaman pengelolaan perangkat.
+
+![Halaman Utama Device](images/create_device/halaman_utama.png)
 
 ---
 
-## 💡 MQTT Topic Convention
+### 4. Klik Tombol `+ Add Sensor Types`
 
-Every device is assigned a unique MQTT topic for data streaming:
+Tekan tombol **+ Add Sensor Types** untuk membuka form penambahan penambahan sensor.
 
-```
-miniweather/<serial_number>
-```
-
-Example:
-
-```
-miniweather/MW-PS-01
-```
+![Tambah Data Device](images/create_device/tambahkan_data_sensor.png)
 
 ---
 
-## 🧠 Redis and Hyperbase Integration
+### 5. Isi Form Penambahan Sensor
 
-If Hyperbase is **online**:
+Isi data perangkat sesuai dengan form yang tersedia:
 
-* Schema is synced immediately
+- **Name** (misal: `Temperature`)
+- **Unit** (unik, misal: `°C`)
+- **Description** (misal: `Ambient temperature`)
 
-If Hyperbase is **offline**:
+![Contoh Form Pengisian Device](images/create_device/contoh_cara_mengisi_data_sensor.png)
 
-* Data sent from the device will be cached in Redis until it can be synced later
+---
+### 6. Hasil dari Penambahan Sensor 
+
+Berikut merupakan sensor yang sudah ditambahkan apabila berhasil
+![Tambah Data Device](images/create_device/hasil_data_sensor.png)
+
+---
+### 7. Klik Tombol `+ Add Device`
+
+Tekan tombol **+ Add Device** untuk membuka form penambahan.
+
+![Tambah Data Device](images/create_device/tambahkan_data_device.png)
 
 ---
 
-## 📌 Summary Table
+### 8. Isi Form Penambahan Perangkat
 
-| Step      | Description                             |
-| --------- | --------------------------------------- |
-| UI Input  | Admin enters device info via form       |
-| API Call  | POST `/v1/onboarding-devices`           |
-| DB Insert | Record added to `onboarding_devices`    |
-| MQTT Sub  | System subscribes to device topic       |
-| Redis     | Queues messages if Hyperbase is down    |
-| Hyperbase | Syncs schema and storage when available |
+Isi data perangkat sesuai dengan form yang tersedia:
+
+- **Device Name** (misal: `Station Pantai Selatan`)
+- **Location** (latitude dan longitude, misal: `-7.7956, 110.3695`)
+- dan seterusnya
+
+![Contoh Form Pengisian Device](images/create_device/contoh_cara_mengisi_data_device.png)
 
 ---
 
-Once completed, the device is ready to transmit weather data and be visualized on the dashboard.
+### 9. Klik Save
+
+Simpan data untuk mendaftarkan perangkat baru ke sistem.
+
+---
+
+## 📦 Hasil Setelah Menambahkan Device
+
+Setelah berhasil ditambahkan, data perangkat akan muncul di halaman list device seperti berikut:
+
+![Hasil Data Device](images/create_device/hasil_data_device.png)
+
+---
