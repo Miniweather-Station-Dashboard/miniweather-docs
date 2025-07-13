@@ -1,221 +1,177 @@
-# Installation Guide
+# Panduan Setup Dashboard Miniweather Station
 
-Dokumen ini menjelaskan proses instalasi ketiga komponen utama sistem Miniweather Station Dashboard, yaitu:
-
-1. **Admin Panel**
-2. **Public Dashboard**
-3. **Backend API**
-
-> ⚠️ Pastikan kamu telah menginstal `Docker` dan `Docker Compose` sebelum melanjutkan.
+Panduan ini akan membimbing Anda dalam menyiapkan tiga layanan utama: **Backend API**, **Dashboard Publik**, dan **Panel Admin**.
 
 ---
 
-## 📁 Struktur Direktori Utama
+## 1. Prasyarat
 
-Misalnya kamu memiliki struktur direktori sebagai berikut:
-
-```
-miniweather/
-├── admin-panel/
-├── public-dashboard/
-├── backend-api/
-├── docker-compose.yml
-```
+- Pastikan Docker dan Docker Compose telah terinstal.
+- Node.js dan npm opsional (jika tidak menggunakan Docker).
+- Akses ke proyek Hyperbase dan token yang dibutuhkan.
 
 ---
 
-## 1. 🚀 Backend API
+## 2. Setup Proyek di Hyperbase
 
-Backend bertanggung jawab atas:
+Sebelum menjalankan layanan, Anda perlu menyiapkan token di Hyperbase:
 
-- Autentikasi
-- Penyimpanan data (PostgreSQL / ScyllaDB)
-- Integrasi MQTT & Redis
-- API untuk dashboard dan admin panel
+- Masuk ke halaman Hyperbase.
+- Buka proyek anda&#x20;
+![Buka Dashboard Hyperbase](images/setup/masuk_ke_halaman_hyperbase.png)
+- Buat atau edit Token App.&#x20;
+![Buka Token yang Anda Miliki](images/setup/pada_bagian_token_salah_satu_token_allow_anonymus_signin.png)
+- Aktifkan opsi **Allow anonymous signin** seperti pada gambar yang tersedia.
+- Pastikan token tersebut memiliki akses ke koleksi yang diperlukan (Find One, Find Many, Insert).
 
-### 📦 Langkah Instalasi
+**Data yang diperlukan:**
+
+- **Project ID:** `0197bc6f-e29d-7161-aaa2-b8ad42e5a69a`
+- **Host URL:** `http://localhost:8080`
+- **Token ID:** `0197bc6f-e2bd-76b1-804d-8f4529ffb2b9`
+- **Bucket ID:** `0197bc70-ffc8-7a82-b854-947577abd29e`
+- **Auth Token:** `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...`
+
+---
+
+## 3. Clone Repositori
+
+Kloning ketiga repositori berikut:
 
 ```bash
-cd backend-api
+# Backend API
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-backend-service-node.git
 
-# Install dependensi
-npm install
+# Dashboard Publik
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-frontend-service-node.git
 
-# Copy konfigurasi
-cp .env.example .env
-
-# Jalankan development
-npm run dev
-```
-
-> Pastikan `.env` berisi konfigurasi `DATABASE_URL`, `MQTT_BROKER_URL`, `REDIS_URL`, dll.
-
-### 🔧 Jika Menggunakan Docker
-
-Tambahkan ke `docker-compose.yml`:
-
-```yaml
-backend:
-  build: ./backend-api
-  ports:
-    - "3001:3001"
-  env_file:
-    - ./backend-api/.env
-  depends_on:
-    - postgres
-    - redis
-    - mqtt
+# Panel Admin
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-adminpage-service-node.git
 ```
 
 ---
 
-## 2. 🧑‍💼 Admin Panel
+## 4. File Environment
 
-Admin Panel digunakan untuk mengelola perangkat, sensor, user, artikel, dan peringatan.
+### 📦 Backend API - `.env`
 
-### 📦 Langkah Instalasi
+```env
+NODE_ENV=dev
+HYPERBASE_PROJECT_ID=0197bc6f-e29d-7161-aaa2-b8ad42e5a69a
+HYPERBASE_HOST=http://localhost:8080
+HYPERBASE_TOKEN_ID=0197bc6f-e2bd-76b1-804d-8f4529ffb2b9
+HYPERBASE_BUCKET_ID=0197bc70-ffc8-7a82-b854-947577abd29e
+HYPERBASE_AUTH_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+
+MQTT_BROKER_URL=mqtt://localhost:1883
+MQTT_TOPIC=backend/miniweather
+MQTT_HYPERBASE_TOPIC=hyperbase/dev
+
+DB_USER=myuser
+DB_PASSWORD=mypassword
+DB_HOST=localhost
+DB_PORT=5435
+DB_NAME=hyperbase
+
+SCYLLA_CONTACT_POINTS=localhost
+SCYLLA_LOCAL_DC=datacenter1
+SCYLLA_KEYSPACE=hyperbase
+SCYLLA_USERNAME=cassandra
+SCYLLA_PASSWORD=cassandra
+SCYLLA_PORT=9042
+DB_TYPE=scylla
+
+JWT_SECRET=ts4S9QrNzyqcGEdnkCahVKuglhHbh27t
+JWT_REFRESH_SECRET=yC5cTGXWDC0A3S7UFfE5C7PFCCtxyyFb
+JWT_EXPIRATION=10s
+JWT_REFRESH_EXPIRATION=1d
+
+GMAIL_USER=user@gmail.com
+GMAIL_PASS=apppassword
+
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+# Jika Redis memiliki autentikasi
+# REDIS_USERNAME=default
+# REDIS_PASSWORD=passwordanda
+
+SWAGGER_SERVER_URL=http://localhost:3001
+```
+
+> **Catatan:** Untuk mendapatkan kredensial Gmail (`GMAIL_USER` dan `GMAIL_PASS`), Anda perlu:
+>
+> 1. Masuk ke akun Gmail Anda.
+> 2. Buka halaman [Google App Passwords](https://myaccount.google.com/apppasswords) (Anda harus mengaktifkan verifikasi 2 langkah terlebih dahulu).
+> 3. Pilih jenis aplikasi "Mail" dan perangkat "Other (Custom name)", lalu beri nama seperti "Miniweather".
+> 4. Google akan memberikan **App Password** berupa 16 karakter yang digunakan sebagai `GMAIL_PASS`.
+> 5. `GMAIL_USER` adalah alamat email Gmail Anda.
+
+
+### 🌐 Dashboard Publik - `.env`
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+```
+
+### 🛠️ Panel Admin - `.env`
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+```
+
+---
+## 4.5. Menjalankan Redis Secara Lokal
+Sebelum menjalankan layanan backend, pastikan Redis berjalan. Jika Anda menggunakan Docker:
 
 ```bash
-cd admin-panel
-
-# Install dependensi
-npm install
-
-# Copy konfigurasi
-cp .env.example .env.local
-
-# Jalankan di localhost
-npm run dev
+docker run -d \
+  --name redis-miniweather \
+  -p 6379:6379 \
+  redis:7-alpine
 ```
-
-### 🐳 Docker Compose
-
-```yaml
-admin-panel:
-  build: ./admin-panel
-  ports:
-    - "3000:3000"
-  env_file:
-    - ./admin-panel/.env.local
-  depends_on:
-    - backend
-```
+Redis akan berjalan di latar belakang pada port default 6379. Anda bisa mengecek statusnya dengan docker ps.
 
 ---
 
-## 3. 🌐 Public Dashboard
+## 5. Menjalankan Layanan dengan Docker
 
-Dashboard publik menampilkan data sensor secara real-time dan informasi peringatan/cuaca.
-
-### 📦 Langkah Instalasi
+Pastikan semua service memiliki `Dockerfile`. Jika belum memiliki `docker-compose.yml`, Anda bisa menjalankannya manual:
 
 ```bash
-cd public-dashboard
+# Backend
+cd miniweather-backend-service-node
+docker build -t miniweather-backend .
+docker run -p 3001:3001 --env-file .env miniweather-backend
 
-# Install dependensi
-npm install
+# Dashboard Publik
+cd ../miniweather-frontend-service-node
+docker build -t miniweather-dashboard .
+docker run -p 3000:3000 --env-file .env miniweather-dashboard
 
-# Copy file konfigurasi
-cp .env.example .env.local
-
-# Jalankan
-npm run dev
-```
-
-### 🐳 Docker Compose
-
-```yaml
-public-dashboard:
-  build: ./public-dashboard
-  ports:
-    - "3002:3000"
-  env_file:
-    - ./public-dashboard/.env.local
-  depends_on:
-    - backend
+# Panel Admin
+cd ../miniweather-adminpage-service-node
+docker build -t miniweather-admin .
+docker run -p 3002:3000 --env-file .env miniweather-admin
 ```
 
 ---
 
-## ⚙️ Jalankan Seluruh Sistem dengan Docker Compose
+## 6. Catatan Tambahan
 
-### 🐳 Contoh `docker-compose.yml`
-
-```yaml
-version: '3.8'
-services:
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: miniweather
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-
-  mqtt:
-    image: emqx/emqx:latest
-    ports:
-      - "1883:1883"
-      - "18083:18083"
-
-  backend:
-    build: ./backend-api
-    ports:
-      - "3001:3001"
-    env_file:
-      - ./backend-api/.env
-    depends_on:
-      - postgres
-      - redis
-      - mqtt
-
-  admin-panel:
-    build: ./admin-panel
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./admin-panel/.env.local
-    depends_on:
-      - backend
-
-  public-dashboard:
-    build: ./public-dashboard
-    ports:
-      - "3002:3000"
-    env_file:
-      - ./public-dashboard/.env.local
-    depends_on:
-      - backend
-
-volumes:
-  pgdata:
-```
-
-### ▶ Jalankan Semua
-
-```bash
-docker compose up --build -d
-```
+- Pastikan Hyperbase dapat diakses di `http://localhost:8080`
+- Redis dan MQTT juga harus berjalan pada port default (`6379` dan `1883`)
+- Anda bisa menggunakan Docker Compose untuk menjalankan seluruh stack sekaligus jika diinginkan
 
 ---
 
-## ✅ Verifikasi
+## 7. Akses Aplikasi
 
-| Komponen         | URL Akses Lokal              |
-| ---------------- | ---------------------------- |
-| Admin Panel      | `http://localhost:3000`      |
-| Public Dashboard | `http://localhost:3002`      |
-| Backend API      | `http://localhost:3001/api/` |
-| MQTT Dashboard   | `http://localhost:18083`     |
+- Panel Admin: `http://localhost:3002`
+- Dashboard Publik: `http://localhost:3000`
+- API Swagger: `http://localhost:3001/docs` (jika tersedia)
 
 ---
 
-Dengan mengikuti langkah-langkah di atas, kamu dapat menjalankan sistem Miniweather Station secara lengkap di lingkungan lokal menggunakan Docker Compose.
+Selamat mencoba dan semoga lancar!

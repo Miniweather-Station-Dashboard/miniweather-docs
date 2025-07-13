@@ -166,185 +166,152 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="installation-guide"><a class="header" href="#installation-guide">Installation Guide</a></h1>
-<p>Dokumen ini menjelaskan proses instalasi ketiga komponen utama sistem Miniweather Station Dashboard, yaitu:</p>
-<ol>
-<li><strong>Admin Panel</strong></li>
-<li><strong>Public Dashboard</strong></li>
-<li><strong>Backend API</strong></li>
-</ol>
-<blockquote>
-<p>⚠️ Pastikan kamu telah menginstal <code>Docker</code> dan <code>Docker Compose</code> sebelum melanjutkan.</p>
-</blockquote>
+                        <h1 id="panduan-setup-dashboard-miniweather-station"><a class="header" href="#panduan-setup-dashboard-miniweather-station">Panduan Setup Dashboard Miniweather Station</a></h1>
+<p>Panduan ini akan membimbing Anda dalam menyiapkan tiga layanan utama: <strong>Backend API</strong>, <strong>Dashboard Publik</strong>, dan <strong>Panel Admin</strong>.</p>
 <hr />
-<h2 id="-struktur-direktori-utama"><a class="header" href="#-struktur-direktori-utama">📁 Struktur Direktori Utama</a></h2>
-<p>Misalnya kamu memiliki struktur direktori sebagai berikut:</p>
-<pre><code>miniweather/
-├── admin-panel/
-├── public-dashboard/
-├── backend-api/
-├── docker-compose.yml
-</code></pre>
-<hr />
-<h2 id="1--backend-api"><a class="header" href="#1--backend-api">1. 🚀 Backend API</a></h2>
-<p>Backend bertanggung jawab atas:</p>
+<h2 id="1-prasyarat"><a class="header" href="#1-prasyarat">1. Prasyarat</a></h2>
 <ul>
-<li>Autentikasi</li>
-<li>Penyimpanan data (PostgreSQL / ScyllaDB)</li>
-<li>Integrasi MQTT &amp; Redis</li>
-<li>API untuk dashboard dan admin panel</li>
+<li>Pastikan Docker dan Docker Compose telah terinstal.</li>
+<li>Node.js dan npm opsional (jika tidak menggunakan Docker).</li>
+<li>Akses ke proyek Hyperbase dan token yang dibutuhkan.</li>
 </ul>
-<h3 id="-langkah-instalasi"><a class="header" href="#-langkah-instalasi">📦 Langkah Instalasi</a></h3>
-<pre><code class="language-bash">cd backend-api
+<hr />
+<h2 id="2-setup-proyek-di-hyperbase"><a class="header" href="#2-setup-proyek-di-hyperbase">2. Setup Proyek di Hyperbase</a></h2>
+<p>Sebelum menjalankan layanan, Anda perlu menyiapkan token di Hyperbase:</p>
+<ul>
+<li>Masuk ke halaman Hyperbase.</li>
+<li>Buka proyek anda 
+<img src="images/setup/masuk_ke_halaman_hyperbase.png" alt="Buka Dashboard Hyperbase" /></li>
+<li>Buat atau edit Token App. 
+<img src="images/setup/pada_bagian_token_salah_satu_token_allow_anonymus_signin.png" alt="Buka Token yang Anda Miliki" /></li>
+<li>Aktifkan opsi <strong>Allow anonymous signin</strong> seperti pada gambar yang tersedia.</li>
+<li>Pastikan token tersebut memiliki akses ke koleksi yang diperlukan (Find One, Find Many, Insert).</li>
+</ul>
+<p><strong>Data yang diperlukan:</strong></p>
+<ul>
+<li><strong>Project ID:</strong> <code>0197bc6f-e29d-7161-aaa2-b8ad42e5a69a</code></li>
+<li><strong>Host URL:</strong> <code>http://localhost:8080</code></li>
+<li><strong>Token ID:</strong> <code>0197bc6f-e2bd-76b1-804d-8f4529ffb2b9</code></li>
+<li><strong>Bucket ID:</strong> <code>0197bc70-ffc8-7a82-b854-947577abd29e</code></li>
+<li><strong>Auth Token:</strong> <code>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></li>
+</ul>
+<hr />
+<h2 id="3-clone-repositori"><a class="header" href="#3-clone-repositori">3. Clone Repositori</a></h2>
+<p>Kloning ketiga repositori berikut:</p>
+<pre><code class="language-bash"># Backend API
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-backend-service-node.git
 
-# Install dependensi
-npm install
+# Dashboard Publik
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-frontend-service-node.git
 
-# Copy konfigurasi
-cp .env.example .env
+# Panel Admin
+git clone https://github.com/Miniweather-Station-Dashboard/miniweather-adminpage-service-node.git
+</code></pre>
+<hr />
+<h2 id="4-file-environment"><a class="header" href="#4-file-environment">4. File Environment</a></h2>
+<h3 id="-backend-api---env"><a class="header" href="#-backend-api---env">📦 Backend API - <code>.env</code></a></h3>
+<pre><code class="language-env">NODE_ENV=dev
+HYPERBASE_PROJECT_ID=0197bc6f-e29d-7161-aaa2-b8ad42e5a69a
+HYPERBASE_HOST=http://localhost:8080
+HYPERBASE_TOKEN_ID=0197bc6f-e2bd-76b1-804d-8f4529ffb2b9
+HYPERBASE_BUCKET_ID=0197bc70-ffc8-7a82-b854-947577abd29e
+HYPERBASE_AUTH_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
-# Jalankan development
-npm run dev
+MQTT_BROKER_URL=mqtt://localhost:1883
+MQTT_TOPIC=backend/miniweather
+MQTT_HYPERBASE_TOPIC=hyperbase/dev
+
+DB_USER=myuser
+DB_PASSWORD=mypassword
+DB_HOST=localhost
+DB_PORT=5435
+DB_NAME=hyperbase
+
+SCYLLA_CONTACT_POINTS=localhost
+SCYLLA_LOCAL_DC=datacenter1
+SCYLLA_KEYSPACE=hyperbase
+SCYLLA_USERNAME=cassandra
+SCYLLA_PASSWORD=cassandra
+SCYLLA_PORT=9042
+DB_TYPE=scylla
+
+JWT_SECRET=ts4S9QrNzyqcGEdnkCahVKuglhHbh27t
+JWT_REFRESH_SECRET=yC5cTGXWDC0A3S7UFfE5C7PFCCtxyyFb
+JWT_EXPIRATION=10s
+JWT_REFRESH_EXPIRATION=1d
+
+GMAIL_USER=user@gmail.com
+GMAIL_PASS=apppassword
+
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+# Jika Redis memiliki autentikasi
+# REDIS_USERNAME=default
+# REDIS_PASSWORD=passwordanda
+
+SWAGGER_SERVER_URL=http://localhost:3001
 </code></pre>
 <blockquote>
-<p>Pastikan <code>.env</code> berisi konfigurasi <code>DATABASE_URL</code>, <code>MQTT_BROKER_URL</code>, <code>REDIS_URL</code>, dll.</p>
+<p><strong>Catatan:</strong> Untuk mendapatkan kredensial Gmail (<code>GMAIL_USER</code> dan <code>GMAIL_PASS</code>), Anda perlu:</p>
+<ol>
+<li>Masuk ke akun Gmail Anda.</li>
+<li>Buka halaman <a href="https://myaccount.google.com/apppasswords">Google App Passwords</a> (Anda harus mengaktifkan verifikasi 2 langkah terlebih dahulu).</li>
+<li>Pilih jenis aplikasi "Mail" dan perangkat "Other (Custom name)", lalu beri nama seperti "Miniweather".</li>
+<li>Google akan memberikan <strong>App Password</strong> berupa 16 karakter yang digunakan sebagai <code>GMAIL_PASS</code>.</li>
+<li><code>GMAIL_USER</code> adalah alamat email Gmail Anda.</li>
+</ol>
 </blockquote>
-<h3 id="-jika-menggunakan-docker"><a class="header" href="#-jika-menggunakan-docker">🔧 Jika Menggunakan Docker</a></h3>
-<p>Tambahkan ke <code>docker-compose.yml</code>:</p>
-<pre><code class="language-yaml">backend:
-  build: ./backend-api
-  ports:
-    - "3001:3001"
-  env_file:
-    - ./backend-api/.env
-  depends_on:
-    - postgres
-    - redis
-    - mqtt
+<h3 id="-dashboard-publik---env"><a class="header" href="#-dashboard-publik---env">🌐 Dashboard Publik - <code>.env</code></a></h3>
+<pre><code class="language-env">NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+</code></pre>
+<h3 id="-panel-admin---env"><a class="header" href="#-panel-admin---env">🛠️ Panel Admin - <code>.env</code></a></h3>
+<pre><code class="language-env">NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
 </code></pre>
 <hr />
-<h2 id="2--admin-panel"><a class="header" href="#2--admin-panel">2. 🧑‍💼 Admin Panel</a></h2>
-<p>Admin Panel digunakan untuk mengelola perangkat, sensor, user, artikel, dan peringatan.</p>
-<h3 id="-langkah-instalasi-1"><a class="header" href="#-langkah-instalasi-1">📦 Langkah Instalasi</a></h3>
-<pre><code class="language-bash">cd admin-panel
-
-# Install dependensi
-npm install
-
-# Copy konfigurasi
-cp .env.example .env.local
-
-# Jalankan di localhost
-npm run dev
+<h2 id="45-menjalankan-redis-secara-lokal"><a class="header" href="#45-menjalankan-redis-secara-lokal">4.5. Menjalankan Redis Secara Lokal</a></h2>
+<p>Sebelum menjalankan layanan backend, pastikan Redis berjalan. Jika Anda menggunakan Docker:</p>
+<pre><code class="language-bash">docker run -d \
+  --name redis-miniweather \
+  -p 6379:6379 \
+  redis:7-alpine
 </code></pre>
-<h3 id="-docker-compose"><a class="header" href="#-docker-compose">🐳 Docker Compose</a></h3>
-<pre><code class="language-yaml">admin-panel:
-  build: ./admin-panel
-  ports:
-    - "3000:3000"
-  env_file:
-    - ./admin-panel/.env.local
-  depends_on:
-    - backend
+<p>Redis akan berjalan di latar belakang pada port default 6379. Anda bisa mengecek statusnya dengan docker ps.</p>
+<hr />
+<h2 id="5-menjalankan-layanan-dengan-docker"><a class="header" href="#5-menjalankan-layanan-dengan-docker">5. Menjalankan Layanan dengan Docker</a></h2>
+<p>Pastikan semua service memiliki <code>Dockerfile</code>. Jika belum memiliki <code>docker-compose.yml</code>, Anda bisa menjalankannya manual:</p>
+<pre><code class="language-bash"># Backend
+cd miniweather-backend-service-node
+docker build -t miniweather-backend .
+docker run -p 3001:3001 --env-file .env miniweather-backend
+
+# Dashboard Publik
+cd ../miniweather-frontend-service-node
+docker build -t miniweather-dashboard .
+docker run -p 3000:3000 --env-file .env miniweather-dashboard
+
+# Panel Admin
+cd ../miniweather-adminpage-service-node
+docker build -t miniweather-admin .
+docker run -p 3002:3000 --env-file .env miniweather-admin
 </code></pre>
 <hr />
-<h2 id="3--public-dashboard"><a class="header" href="#3--public-dashboard">3. 🌐 Public Dashboard</a></h2>
-<p>Dashboard publik menampilkan data sensor secara real-time dan informasi peringatan/cuaca.</p>
-<h3 id="-langkah-instalasi-2"><a class="header" href="#-langkah-instalasi-2">📦 Langkah Instalasi</a></h3>
-<pre><code class="language-bash">cd public-dashboard
-
-# Install dependensi
-npm install
-
-# Copy file konfigurasi
-cp .env.example .env.local
-
-# Jalankan
-npm run dev
-</code></pre>
-<h3 id="-docker-compose-1"><a class="header" href="#-docker-compose-1">🐳 Docker Compose</a></h3>
-<pre><code class="language-yaml">public-dashboard:
-  build: ./public-dashboard
-  ports:
-    - "3002:3000"
-  env_file:
-    - ./public-dashboard/.env.local
-  depends_on:
-    - backend
-</code></pre>
+<h2 id="6-catatan-tambahan"><a class="header" href="#6-catatan-tambahan">6. Catatan Tambahan</a></h2>
+<ul>
+<li>Pastikan Hyperbase dapat diakses di <code>http://localhost:8080</code></li>
+<li>Redis dan MQTT juga harus berjalan pada port default (<code>6379</code> dan <code>1883</code>)</li>
+<li>Anda bisa menggunakan Docker Compose untuk menjalankan seluruh stack sekaligus jika diinginkan</li>
+</ul>
 <hr />
-<h2 id="-jalankan-seluruh-sistem-dengan-docker-compose"><a class="header" href="#-jalankan-seluruh-sistem-dengan-docker-compose">⚙️ Jalankan Seluruh Sistem dengan Docker Compose</a></h2>
-<h3 id="-contoh-docker-composeyml"><a class="header" href="#-contoh-docker-composeyml">🐳 Contoh <code>docker-compose.yml</code></a></h3>
-<pre><code class="language-yaml">version: '3.8'
-services:
-  postgres:
-    image: postgres:14
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: miniweather
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-
-  mqtt:
-    image: emqx/emqx:latest
-    ports:
-      - "1883:1883"
-      - "18083:18083"
-
-  backend:
-    build: ./backend-api
-    ports:
-      - "3001:3001"
-    env_file:
-      - ./backend-api/.env
-    depends_on:
-      - postgres
-      - redis
-      - mqtt
-
-  admin-panel:
-    build: ./admin-panel
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./admin-panel/.env.local
-    depends_on:
-      - backend
-
-  public-dashboard:
-    build: ./public-dashboard
-    ports:
-      - "3002:3000"
-    env_file:
-      - ./public-dashboard/.env.local
-    depends_on:
-      - backend
-
-volumes:
-  pgdata:
-</code></pre>
-<h3 id="-jalankan-semua"><a class="header" href="#-jalankan-semua">▶ Jalankan Semua</a></h3>
-<pre><code class="language-bash">docker compose up --build -d
-</code></pre>
+<h2 id="7-akses-aplikasi"><a class="header" href="#7-akses-aplikasi">7. Akses Aplikasi</a></h2>
+<ul>
+<li>Panel Admin: <code>http://localhost:3002</code></li>
+<li>Dashboard Publik: <code>http://localhost:3000</code></li>
+<li>API Swagger: <code>http://localhost:3001/docs</code> (jika tersedia)</li>
+</ul>
 <hr />
-<h2 id="-verifikasi"><a class="header" href="#-verifikasi">✅ Verifikasi</a></h2>
-<div class="table-wrapper"><table><thead><tr><th>Komponen</th><th>URL Akses Lokal</th></tr></thead><tbody>
-<tr><td>Admin Panel</td><td><code>http://localhost:3000</code></td></tr>
-<tr><td>Public Dashboard</td><td><code>http://localhost:3002</code></td></tr>
-<tr><td>Backend API</td><td><code>http://localhost:3001/api/</code></td></tr>
-<tr><td>MQTT Dashboard</td><td><code>http://localhost:18083</code></td></tr>
-</tbody></table>
-</div>
-<hr />
-<p>Dengan mengikuti langkah-langkah di atas, kamu dapat menjalankan sistem Miniweather Station secara lengkap di lingkungan lokal menggunakan Docker Compose.</p>
+<p>Selamat mencoba dan semoga lancar!</p>
 
                     </main>
 
