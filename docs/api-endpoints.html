@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>FAQ - Miniweather Station Dashboard Documentation</title>
+        <title>API Endpoints - Miniweather Station Dashboard Documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -166,25 +166,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="faq"><a class="header" href="#faq">FAQ</a></h1>
-<p><strong>Q: What happens if Hyperbase is offline?</strong><br />
-A: The system caches all incoming data in Redis and retries sending it once Hyperbase is reachable again.</p>
-<p><strong>Q: Can multiple devices be onboarded at once?</strong><br />
-A: Currently, onboarding is manual per device, but bulk import may be added in future updates.</p>
-<p><strong>Q: Is this system open-source?</strong><br />
-A: Yes. Contributions are welcome.</p>
+                        <h1 id="api-endpoints"><a class="header" href="#api-endpoints">API Endpoints</a></h1>
+<p>Dokumentasi ini berisi daftar endpoint yang tersedia pada sistem <strong>Mini Weather Station Dashboard</strong>.<br />
+Endpoint-endpoint ini digunakan oleh <strong>dashboard publik</strong>, <strong>panel admin</strong>, dan juga untuk komunikasi dengan perangkat IoT melalui protokol MQTT (untuk beberapa kasus khusus).</p>
+<hr />
+<h2 id="1-postman-collection"><a class="header" href="#1-postman-collection">1. Postman Collection</a></h2>
+<p>Untuk memudahkan eksplorasi dan pengujian API, kamu bisa mengimpor Postman Collection berikut:</p>
+<p>👉 <strong><a href="https://www.postman.com/borobudur-andro/workspace/miniweather-station-dashboard/collection/24138321-e96624ab-a61f-48c1-97c2-59938cef1457?action=share&amp;source=copy-link&amp;creator=24138321">Postman Collection Link</a></strong></p>
+<blockquote>
+<p><strong>Catatan:</strong><br />
+Link tersebut berisi semua endpoint lengkap dengan contoh request, response, dan environment yang diperlukan.</p>
+</blockquote>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="manage-admin.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="database-architecture.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="database-architecture.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -192,13 +193,10 @@ A: Yes. Contributions are welcome.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="manage-admin.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="database-architecture.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="database-architecture.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
             </nav>
 
         </div>

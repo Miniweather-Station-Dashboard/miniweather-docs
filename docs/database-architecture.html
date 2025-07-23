@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>FAQ - Miniweather Station Dashboard Documentation</title>
+        <title>Database &amp; Architecture - Miniweather Station Dashboard Documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -166,23 +166,51 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="faq"><a class="header" href="#faq">FAQ</a></h1>
-<p><strong>Q: What happens if Hyperbase is offline?</strong><br />
-A: The system caches all incoming data in Redis and retries sending it once Hyperbase is reachable again.</p>
-<p><strong>Q: Can multiple devices be onboarded at once?</strong><br />
-A: Currently, onboarding is manual per device, but bulk import may be added in future updates.</p>
-<p><strong>Q: Is this system open-source?</strong><br />
-A: Yes. Contributions are welcome.</p>
+                        <h1 id="database--architecture"><a class="header" href="#database--architecture">Database &amp; Architecture</a></h1>
+<p>Sistem ini menggunakan <strong>dua jenis database</strong> dan memiliki dua level arsitektur yang perlu dipahami agar implementasi dan integrasi berjalan dengan benar.</p>
+<hr />
+<h2 id="1-standalone-architecture-sistem-sendiri"><a class="header" href="#1-standalone-architecture-sistem-sendiri">1. Standalone Architecture (Sistem Sendiri)</a></h2>
+<p>Pada desain awal, sistem berjalan menggunakan <strong>PostgreSQL</strong> sebagai database utama.<br />
+Semua tabel inti seperti <code>onboarding_devices</code>, <code>device_sensors</code>, <code>users</code>, <code>articles</code>, dan lain-lain berada dalam PostgreSQL.<br />
+Data sensor langsung diproses dan disimpan ke tabel-tabel tersebut tanpa perantara.</p>
+<p><img src="images/database-architecture.png" alt="Standalone Architecture" /></p>
+<hr />
+<h2 id="2-integrated-architecture-sistem-terintegrasi-dengan-hyperbase"><a class="header" href="#2-integrated-architecture-sistem-terintegrasi-dengan-hyperbase">2. Integrated Architecture (Sistem Terintegrasi dengan Hyperbase)</a></h2>
+<p>Untuk sistem yang <strong>siap produksi</strong> dan <strong>skalabilitas besar</strong>, arsitektur diperluas dengan mengintegrasikan <strong>Hyperbase</strong>.<br />
+Hyperbase digunakan untuk menyimpan <em>raw data</em> dari perangkat IoT sebelum data itu diolah dan dimasukkan ke PostgreSQL.</p>
+<p><img src="images/database-full-integrated.png" alt="Integrated Architecture" /></p>
+<p><strong>Penjelasan alur integrasi:</strong></p>
+<ul>
+<li>Perangkat IoT mengirim data <em>raw</em> melalui MQTT ke backend.</li>
+<li>Backend menyimpan data mentah di <strong>Hyperbase</strong> sebagai data historis yang scalable.</li>
+<li>Proses ETL (Extract, Transform, Load) memindahkan data yang sudah diproses ke <strong>PostgreSQL</strong> untuk kebutuhan query cepat.</li>
+<li>Dashboard publik dan panel admin tetap hanya membaca data dari PostgreSQL.</li>
+</ul>
+<hr />
+<h2 id="3-relasi-antar-tabel-postgresql"><a class="header" href="#3-relasi-antar-tabel-postgresql">3. Relasi Antar Tabel (PostgreSQL)</a></h2>
+<p>Beberapa tabel utama di PostgreSQL:</p>
+<div class="table-wrapper"><table><thead><tr><th>Tabel</th><th>Deskripsi Singkat</th></tr></thead><tbody>
+<tr><td><code>onboarding_devices</code></td><td>Menyimpan daftar perangkat yang terdaftar</td></tr>
+<tr><td><code>device_sensors</code></td><td>Menyimpan jenis sensor yang terpasang pada setiap perangkat</td></tr>
+<tr><td><code>sensor_types</code></td><td>Master data jenis sensor</td></tr>
+<tr><td><code>users</code></td><td>Data admin/operator, termasuk autentikasi</td></tr>
+<tr><td><code>articles</code></td><td>Konten informasi dan edukasi</td></tr>
+<tr><td><code>warnings</code></td><td>Peringatan dini dari sistem</td></tr>
+<tr><td><code>server_errors</code></td><td>Log error yang tercatat</td></tr>
+<tr><td><code>refresh_tokens</code></td><td>Token refresh untuk autentikasi</td></tr>
+</tbody></table>
+</div>
+<hr />
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="manage-admin.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="faq.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="database-architecture.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="api-endpoints.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -192,11 +220,11 @@ A: Yes. Contributions are welcome.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="manage-admin.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="faq.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="database-architecture.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="api-endpoints.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
