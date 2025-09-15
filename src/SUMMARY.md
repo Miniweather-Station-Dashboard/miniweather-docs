@@ -13,6 +13,7 @@
 ## Technical Details
 - [Database & Architecture](database-architecture.md)
 - [API Endpoints](api-endpoints.md)
+- [Data Generator](data-generator.md)
 <!-- - [Data Flow & MQTT Integration](data-flow-mqtt.md)
 - [Caching & Performance (Redis/others)](caching-performance.md)
 - [Security & Authentication](security-auth.md) -->

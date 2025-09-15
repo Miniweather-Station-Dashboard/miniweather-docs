@@ -612,6 +612,166 @@ Endpoint-endpoint ini digunakan oleh <strong>dashboard publik</strong>, <strong>
 <p><strong>Catatan:</strong><br />
 Link tersebut berisi semua endpoint lengkap dengan contoh request, response, dan environment yang diperlukan.</p>
 </blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="data-generator"><a class="header" href="#data-generator">Data Generator</a></h1>
+<p>This section explains how to use the Go-based <strong>Data Generator</strong> to simulate sensor readings and publish them to the MQTT broker. This tool is useful for testing the system when real devices are not available or when you need to generate continuous dummy data.</p>
+<hr />
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The data generator is a standalone Go program that:</p>
+<ul>
+<li>Connects to an MQTT broker (using WebSocket protocol).</li>
+<li>Continuously simulates random sensor values (e.g., seismograph, humidity, pressure).</li>
+<li>Publishes the generated data to a specific device topic.</li>
+</ul>
+<hr />
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>Before running the generator, make sure you have:</p>
+<ul>
+<li><strong>Go</strong> installed (minimum v1.18).</li>
+<li>An <strong>MQTT broker</strong> running (e.g., <a href="https://www.emqx.io/">EMQX</a>).</li>
+<li>A valid <strong>MQTT topic</strong> assigned to a device (UUID-based).</li>
+</ul>
+<hr />
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<ol>
+<li>Save the following code into a file, e.g., <code>generator.go</code>:</li>
+</ol>
+<pre><code class="language-go">package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math/rand"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+)
+
+type Payload struct {
+	Data map[string]interface{} `json:"data"`
+}
+
+func main() {
+	// MQTT broker over WebSocket
+	broker := "ws://127.0.0.1:8083/mqtt" // use 127.0.0.1 instead of 0.0.0.0
+	clientID := "GoDummySensor"
+
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(broker)
+	opts.SetClientID(clientID)
+
+	client := mqtt.NewClient(opts)
+
+	if token := client.Connect(); token.Wait() &amp;&amp; token.Error() != nil {
+		fmt.Printf("❌ Failed to connect to broker: %v\n", token.Error())
+		return
+	}
+	fmt.Println("✅ Connected to EMQX broker via WebSocket.")
+
+	// Your device-specific MQTT topic
+	topic := "/devices/a8670a62-4a6d-443d-a532-2f1325a8f7db"
+	counter := 1
+
+	for {
+		// Simulate realistic sensor values
+		data := map[string]interface{}{
+			"seismograf": 20 + rand.Float64()*15, // 20–35
+			"humidity":   50 + rand.Float64()*30, // 50–80%
+			"pressure":   1000 + rand.Float64()*50, // hPa
+		}
+
+		payload := Payload{Data: data}
+
+		jsonPayload, err := json.Marshal(payload)
+		if err != nil {
+			fmt.Printf("❌ Failed to marshal JSON: %v\n", err)
+			continue
+		}
+
+		token := client.Publish(topic, 1, false, jsonPayload)
+		token.Wait()
+
+		now := time.Now().UTC()
+		fmt.Printf("📤 [%02d] Sent at %s | Topic: %s\n", counter, now.Format(time.RFC3339Nano), topic)
+
+		counter++
+		time.Sleep(2 * time.Second)
+	}
+}
+</code></pre>
+<ol start="2">
+<li>
+<p>Install dependencies:</p>
+<pre><code class="language-bash">go mod init generator
+go get github.com/eclipse/paho.mqtt.golang
+</code></pre>
+</li>
+<li>
+<p>Build the binary:</p>
+<pre><code class="language-bash">go build -o generator generator.go
+</code></pre>
+</li>
+</ol>
+<hr />
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<p>Run the generator with:</p>
+<pre><code class="language-bash">./generator
+</code></pre>
+<p>Expected output:</p>
+<pre><code>✅ Connected to EMQX broker via WebSocket.
+📤 [01] Sent at 2025-09-15T09:00:00Z | Topic: /devices/a8670a62-4a6d-443d-a532-2f1325a8f7db
+📤 [02] Sent at 2025-09-15T09:00:02Z | Topic: /devices/a8670a62-4a6d-443d-a532-2f1325a8f7db
+...
+</code></pre>
+<hr />
+<h2 id="customization"><a class="header" href="#customization">Customization</a></h2>
+<p>You can modify the following parts of the code to fit your needs:</p>
+<ul>
+<li>
+<p><strong>Broker URL</strong>:</p>
+<pre><code class="language-go">broker := "ws://127.0.0.1:8083/mqtt"
+</code></pre>
+<p>Change the host/port according to your EMQX configuration.</p>
+</li>
+<li>
+<p><strong>Topic</strong>:</p>
+<pre><code class="language-go">topic := "/devices/&lt;device-uuid&gt;"
+</code></pre>
+<p>Replace with your device’s actual topic.</p>
+</li>
+<li>
+<p><strong>Data Fields</strong>:</p>
+<pre><code class="language-go">data := map[string]interface{}{
+    "humidity":   50 + rand.Float64()*30,
+    "pressure":   1000 + rand.Float64()*50,
+}
+</code></pre>
+<p>Uncomment or add additional fields (e.g., <code>temperature</code>, <code>rainfall</code>, <code>wind_speed</code>).</p>
+</li>
+<li>
+<p><strong>Interval</strong>:</p>
+<pre><code class="language-go">time.Sleep(2 * time.Second)
+</code></pre>
+<p>Adjust the interval between messages.</p>
+</li>
+</ul>
+<hr />
+<h2 id="example-payload"><a class="header" href="#example-payload">Example Payload</a></h2>
+<p>A typical JSON payload looks like this:</p>
+<pre><code class="language-json">{
+  "data": {
+    "humidity": 65.12,
+    "pressure": 1012.56
+  }
+}
+</code></pre>
+<hr />
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<ul>
+<li>The generator runs <strong>indefinitely</strong> until you stop it manually (<code>Ctrl+C</code>).</li>
+<li>Ensure that the MQTT topic matches your backend subscription.</li>
+<li>You can run multiple instances with different client IDs and topics to simulate multiple devices.</li>
+</ul>
+<hr />
 
                     </main>
 
@@ -630,22 +790,6 @@ Link tersebut berisi semua endpoint lengkap dengan contoh request, response, dan
 
         </div>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        <script>
-            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
-            const socket = new WebSocket(wsAddress);
-            socket.onmessage = function (event) {
-                if (event.data === "reload") {
-                    socket.close();
-                    location.reload();
-                }
-            };
-
-            window.onbeforeunload = function() {
-                socket.close();
-            }
-        </script>
 
 
 

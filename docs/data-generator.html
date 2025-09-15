@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Miniweather Station Dashboard Documentation</title>
+        <title>Data Generator - Miniweather Station Dashboard Documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -166,62 +166,175 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Miniweather Station Dashboard adalah sistem pemantauan cuaca berbasis IoT yang memungkinkan pengguna untuk melihat data sensor secara real-time dari berbagai lokasi. Sistem ini dirancang untuk mendukung pemantauan lingkungan secara efisien dan terstruktur, serta dapat diskalakan sesuai kebutuhan.</p>
+                        <h1 id="data-generator"><a class="header" href="#data-generator">Data Generator</a></h1>
+<p>This section explains how to use the Go-based <strong>Data Generator</strong> to simulate sensor readings and publish them to the MQTT broker. This tool is useful for testing the system when real devices are not available or when you need to generate continuous dummy data.</p>
 <hr />
-<h2 id="-tujuan"><a class="header" href="#-tujuan">🎯 Tujuan</a></h2>
-<p>Dokumentasi ini bertujuan untuk memberikan panduan lengkap bagi administrator dan pengguna teknis dalam:</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The data generator is a standalone Go program that:</p>
 <ul>
-<li>Mengelola perangkat IoT (onboarding, konfigurasi)</li>
-<li>Menambahkan dan mengelola tipe sensor</li>
-<li>Mengelola data dan visualisasi</li>
-<li>Menjalankan proses monitoring dan validasi data</li>
-<li>Menggunakan fitur-fitur admin panel secara optimal</li>
+<li>Connects to an MQTT broker (using WebSocket protocol).</li>
+<li>Continuously simulates random sensor values (e.g., seismograph, humidity, pressure).</li>
+<li>Publishes the generated data to a specific device topic.</li>
 </ul>
 <hr />
-<h2 id="-komponen-utama-sistem"><a class="header" href="#-komponen-utama-sistem">⚙️ Komponen Utama Sistem</a></h2>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<p>Before running the generator, make sure you have:</p>
+<ul>
+<li><strong>Go</strong> installed (minimum v1.18).</li>
+<li>An <strong>MQTT broker</strong> running (e.g., <a href="https://www.emqx.io/">EMQX</a>).</li>
+<li>A valid <strong>MQTT topic</strong> assigned to a device (UUID-based).</li>
+</ul>
+<hr />
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
 <ol>
+<li>Save the following code into a file, e.g., <code>generator.go</code>:</li>
+</ol>
+<pre><code class="language-go">package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math/rand"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+)
+
+type Payload struct {
+	Data map[string]interface{} `json:"data"`
+}
+
+func main() {
+	// MQTT broker over WebSocket
+	broker := "ws://127.0.0.1:8083/mqtt" // use 127.0.0.1 instead of 0.0.0.0
+	clientID := "GoDummySensor"
+
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(broker)
+	opts.SetClientID(clientID)
+
+	client := mqtt.NewClient(opts)
+
+	if token := client.Connect(); token.Wait() &amp;&amp; token.Error() != nil {
+		fmt.Printf("❌ Failed to connect to broker: %v\n", token.Error())
+		return
+	}
+	fmt.Println("✅ Connected to EMQX broker via WebSocket.")
+
+	// Your device-specific MQTT topic
+	topic := "/devices/a8670a62-4a6d-443d-a532-2f1325a8f7db"
+	counter := 1
+
+	for {
+		// Simulate realistic sensor values
+		data := map[string]interface{}{
+			"seismograf": 20 + rand.Float64()*15, // 20–35
+			"humidity":   50 + rand.Float64()*30, // 50–80%
+			"pressure":   1000 + rand.Float64()*50, // hPa
+		}
+
+		payload := Payload{Data: data}
+
+		jsonPayload, err := json.Marshal(payload)
+		if err != nil {
+			fmt.Printf("❌ Failed to marshal JSON: %v\n", err)
+			continue
+		}
+
+		token := client.Publish(topic, 1, false, jsonPayload)
+		token.Wait()
+
+		now := time.Now().UTC()
+		fmt.Printf("📤 [%02d] Sent at %s | Topic: %s\n", counter, now.Format(time.RFC3339Nano), topic)
+
+		counter++
+		time.Sleep(2 * time.Second)
+	}
+}
+</code></pre>
+<ol start="2">
 <li>
-<p><strong>Admin Panel</strong><br />
-Antarmuka untuk mengelola perangkat, sensor, artikel, dan pengguna.</p>
+<p>Install dependencies:</p>
+<pre><code class="language-bash">go mod init generator
+go get github.com/eclipse/paho.mqtt.golang
+</code></pre>
 </li>
 <li>
-<p><strong>Public Dashboard</strong><br />
-Menampilkan data cuaca secara real-time ke publik.</p>
-</li>
-<li>
-<p><strong>Backend API</strong><br />
-Menangani autentikasi, penyimpanan data, integrasi MQTT, dan pengolahan data.</p>
-</li>
-<li>
-<p><strong>MQTT Broker</strong><br />
-Menjadi jalur komunikasi antara device IoT dan backend.</p>
-</li>
-<li>
-<p><strong>Redis &amp; Hyperbase</strong><br />
-Redis digunakan untuk caching data jika Hyperbase offline, sementara Hyperbase menyimpan data secara permanen.</p>
+<p>Build the binary:</p>
+<pre><code class="language-bash">go build -o generator generator.go
+</code></pre>
 </li>
 </ol>
 <hr />
-<h2 id="-struktur-dokumentasi"><a class="header" href="#-struktur-dokumentasi">🧭 Struktur Dokumentasi</a></h2>
-<p>Dokumentasi ini terbagi ke dalam beberapa bagian penting:</p>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<p>Run the generator with:</p>
+<pre><code class="language-bash">./generator
+</code></pre>
+<p>Expected output:</p>
+<pre><code>✅ Connected to EMQX broker via WebSocket.
+📤 [01] Sent at 2025-09-15T09:00:00Z | Topic: /devices/a8670a62-4a6d-443d-a532-2f1325a8f7db
+📤 [02] Sent at 2025-09-15T09:00:02Z | Topic: /devices/a8670a62-4a6d-443d-a532-2f1325a8f7db
+...
+</code></pre>
+<hr />
+<h2 id="customization"><a class="header" href="#customization">Customization</a></h2>
+<p>You can modify the following parts of the code to fit your needs:</p>
 <ul>
-<li><strong>Installation</strong>: Panduan instalasi dan setup awal</li>
-<li><strong>Onboarding Device</strong>: Proses menambahkan perangkat ke sistem</li>
-<li><strong>Manage Alerts, Articles &amp; Users</strong>: Manajemen konten dashboard dan admin</li>
-<li><strong>API Reference</strong>: Detail teknis endpoint</li>
+<li>
+<p><strong>Broker URL</strong>:</p>
+<pre><code class="language-go">broker := "ws://127.0.0.1:8083/mqtt"
+</code></pre>
+<p>Change the host/port according to your EMQX configuration.</p>
+</li>
+<li>
+<p><strong>Topic</strong>:</p>
+<pre><code class="language-go">topic := "/devices/&lt;device-uuid&gt;"
+</code></pre>
+<p>Replace with your device’s actual topic.</p>
+</li>
+<li>
+<p><strong>Data Fields</strong>:</p>
+<pre><code class="language-go">data := map[string]interface{}{
+    "humidity":   50 + rand.Float64()*30,
+    "pressure":   1000 + rand.Float64()*50,
+}
+</code></pre>
+<p>Uncomment or add additional fields (e.g., <code>temperature</code>, <code>rainfall</code>, <code>wind_speed</code>).</p>
+</li>
+<li>
+<p><strong>Interval</strong>:</p>
+<pre><code class="language-go">time.Sleep(2 * time.Second)
+</code></pre>
+<p>Adjust the interval between messages.</p>
+</li>
 </ul>
 <hr />
-<p>Dengan mengikuti dokumentasi ini, kamu akan dapat mengoperasikan dan mengembangkan sistem Miniweather Station dengan lebih efektif dan efisien.</p>
+<h2 id="example-payload"><a class="header" href="#example-payload">Example Payload</a></h2>
+<p>A typical JSON payload looks like this:</p>
+<pre><code class="language-json">{
+  "data": {
+    "humidity": 65.12,
+    "pressure": 1012.56
+  }
+}
+</code></pre>
+<hr />
+<h2 id="notes"><a class="header" href="#notes">Notes</a></h2>
+<ul>
+<li>The generator runs <strong>indefinitely</strong> until you stop it manually (<code>Ctrl+C</code>).</li>
+<li>Ensure that the MQTT topic matches your backend subscription.</li>
+<li>You can run multiple instances with different client IDs and topics to simulate multiple devices.</li>
+</ul>
+<hr />
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-
-                            <a rel="next prefetch" href="installation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
+                            <a rel="prev" href="api-endpoints.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
                             </a>
+
 
                         <div style="clear: both"></div>
                     </nav>
@@ -229,10 +342,10 @@ Redis digunakan untuk caching data jika Hyperbase offline, sementara Hyperbase m
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-
-                    <a rel="next prefetch" href="installation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
+                    <a rel="prev" href="api-endpoints.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
                     </a>
+
             </nav>
 
         </div>
